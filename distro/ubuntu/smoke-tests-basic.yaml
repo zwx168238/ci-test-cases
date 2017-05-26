@@ -10,12 +10,8 @@ metadata:
     scope:
         - functional
     devices:
-        - panda
-        - panda-es
-        - arndale
-        - vexpress-a9
-        - vexpress-tc2
-        - juno
+        - d05
+
 
 run:
     steps:
