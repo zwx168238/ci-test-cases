@@ -16,35 +16,15 @@ else
 fi
 
 
-docker pull openestuary/apache
-print_info $? docker-pull-apache
-
-
-docker pull openestuary/mysql
-print_info $? docker-pull-mysql
+docker pull forumi0721alpineaarch64/alpine-aarch64-jenkins
+print_info $? docker-pull-jenkins
 
 
 images=$(docker images| grep -v 'REPOSITORY' | awk '{print $1}')
-docker_images=$(echo $images | grep mysql | grep apache)
 
-if [ ! -d Discuz ]; then
-    download_file http://htsat.vicp.cc:808/Docker-files/Discuz.tar.gz
-    [[ $? -eq 0 ]] && tar xf Discuz.tar.gz
-fi
-if [ ! -d mysql_data ]; then
-    download_file http://htsat.vicp.cc:808/Docker-files/mysql_data.tar.gz
-    [[ $? -eq 0 ]] && tar xf mysql_data.tar.gz
-fi
-sed -i "s/192.168.1.246/${local_ip}/g" `grep -rl 192.168.1.246 ./Discuz`
+docker run -d -p 8080:8080/tcp -name jenkins forumi0721alpineaarch64/alpine-aarch64-jenkins:latest
+print_info $? docker-run-jenkins
 
-cp -rf Discuz mysql_data  /root/
-
-docker run -d -p 32768:80 --name apache -v /root/Discuz:/var/www/html openestuary/apache
-print_info $? docker-run-apache
-
-
-docker run -d -p 32769:3306 --name mysql -v /root/mysql_data:/u01/my3306/data openestuary/mysql
-print_info $? docker-run-mysql
 
 
 container_id=$(docker ps | grep -v IMAGE | awk '{print $1}')
@@ -70,9 +50,10 @@ do
     i=$(( $i + 1 ))
 done
 
-wget http://${local_ip}:32768/upload
-print_info $? docker-run-LAMP
-
+jenkins_listen=$(lsof -i:8080|wc -l)
+if [ ${jenkins_listen} -eq 2 ]; then
+    print_info $? docker-run-jenkins
+fi
 
 for i in $container_id
 do

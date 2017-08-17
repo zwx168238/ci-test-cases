@@ -16,9 +16,7 @@ metadata:
         - debian
 
     devices:
-        - d02
-        - d03
-        - d01
+        - d05
 install:
     deps:
         - vsftpd
