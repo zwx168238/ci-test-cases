@@ -34,7 +34,7 @@ install:
             stable"'
         - 'sudo apt-get update'
     deps:
-        - docker
+        - docker-ce
 
 params:
     VERSION: ''
